@@ -1,20 +1,18 @@
 export default async function handler(req, res) {
-  const response = await fetch("https://api.the-odds-api.com/v4/sports/soccer/odds", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    // A URL abaixo inclui os parâmetros necessários:
-    // - regions=eu -> Europa
-    // - markets=h2h -> Resultado final
-    // - oddsFormat=decimal -> Odds padrão
-    // - dateFormat=iso -> Datas ISO
-  });
+  const apiKey = "01d78fd892a0235f2cb6ad55fcd6df29";
 
-  if (!response.ok) {
-    return res.status(500).json({ error: "Erro ao buscar odds" });
+  const url = `https://api.the-odds-api.com/v4/sports/soccer_epl/odds/?regions=eu&markets=h2h&oddsFormat=decimal&apiKey=${apiKey}`;
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error("Erro ao buscar dados da API");
+    }
+
+    const data = await response.json();
+
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar odds" });
   }
-
-  const data = await response.json();
-  res.status(200).json(data);
 }
